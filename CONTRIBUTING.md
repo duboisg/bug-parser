@@ -1,19 +1,19 @@
-# Contribuer
+# Contributing
 
-Les contributions sont les bienvenues, en particulier sur :
+Contributions are welcome, especially around:
 
-- l'évaluation de la qualité des classifications ;
-- la robustesse de l'extraction JSON ;
-- la mesure du coût et du temps d'inférence local ;
-- l'anonymisation et la protection des données Jira ;
-- la généralisation du pipeline à d'autres données opérationnelles.
+- evaluating classification quality;
+- improving structured JSON extraction;
+- measuring local inference cost and latency;
+- anonymizing and protecting Jira data;
+- generalizing the pipeline to other operational datasets.
 
-Avant de proposer une modification :
+Before proposing a change:
 
-1. vérifier que les données Jira et les secrets restent hors du dépôt ;
-2. décrire clairement le comportement attendu ;
-3. lancer `python -m compileall -q app.py main.py src` ;
-4. mettre à jour la documentation si le fonctionnement visible change.
+1. verify that Jira data and secrets remain outside the repository;
+2. describe the expected behavior clearly;
+3. run `python -m compileall -q app.py main.py src`;
+4. update the documentation when visible behavior changes.
 
-Les sorties d'un modèle doivent être présentées comme des hypothèses vérifiables, jamais comme des causes certaines sans validation humaine.
+Model outputs must be presented as verifiable hypotheses, never as confirmed causes without human validation.
 

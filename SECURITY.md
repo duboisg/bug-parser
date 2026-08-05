@@ -1,19 +1,19 @@
-# Sécurité
+# Security
 
-## Signaler une vulnérabilité
+## Reporting a vulnerability
 
-Ne publiez pas de vulnérabilité ou de donnée sensible dans une issue publique.
+Do not publish vulnerabilities or sensitive data in a public issue.
 
-Utilisez les avis de sécurité privés de GitHub lorsque cette fonctionnalité est disponible. À défaut, ouvrez une discussion privée avec le mainteneur avant toute publication.
+Use GitHub private security advisories when available. Otherwise, contact the maintainer privately before making any disclosure.
 
-## Données sensibles
+## Sensitive data
 
-Ce projet peut traiter des tickets Jira confidentiels. Ne commitez jamais :
+This project may process confidential Jira issues. Never commit:
 
-- un fichier `.env` ou un mot de passe ;
-- une base SQLite ou un export de tickets ;
-- un rapport contenant des identifiants ou des descriptions internes ;
-- une clé d'API, un jeton ou un certificat privé.
+- a `.env` file or password;
+- a SQLite database or issue export;
+- a report containing identifiers or internal descriptions;
+- an API key, token, or private certificate.
 
-Les fichiers locaux produits par le pipeline sont exclus par `.gitignore`.
+Local pipeline output is excluded by `.gitignore`.
 
