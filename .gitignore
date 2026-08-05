@@ -10,9 +10,13 @@ output/*.db
 output/*.json
 output/*.csv
 
+# Local test and coverage output
+.coverage
+htmlcov/
+coverage.xml
+
 # Local editor and OS files
 .idea/
 .vscode/
 *.swp
 Thumbs.db
-

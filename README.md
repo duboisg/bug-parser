@@ -1,87 +1,87 @@
 # Bug Parser
 
-An exploratory proof of concept for turning unstructured game-bug reports into production intelligence with a local, low-cost LLM pipeline.
+Preuve de concept exploratoire visant à transformer des rapports de bugs de jeu vidéo en intelligence de production grâce à un pipeline LLM local et peu coûteux.
 
-## Why this exists
+## Pourquoi ce projet existe
 
-In game development, bug databases contain more than a queue of individual fixes. Across enough reports, they can reveal recurring weaknesses in asset production, content authoring, integration, configuration, testing, or team hand-offs. Those patterns are valuable because they point upstream: toward the systems and processes that generate bugs, not only toward the symptoms that testers discover.
+Dans le développement de jeux vidéo, une base de bugs contient davantage qu'une liste de corrections. Lorsqu'on analyse suffisamment de rapports, elle peut révéler des fragilités récurrentes dans la production d'assets, l'intégration, la configuration, le contenu, les tests ou les passages de relais entre équipes. Ces régularités sont intéressantes parce qu'elles permettent de remonter vers les systèmes et les processus qui produisent les bugs, au lieu de traiter uniquement leurs symptômes.
 
-Bug Parser tests that idea on a deliberately specific workflow: ingest Bug QC issues from Jira, ask a local inference model to classify their likely root cause, and aggregate the results into views that can inform production decisions. The underlying pattern is broader than games: use an LLM as a classification layer over existing unstructured operational data, then connect the resulting categories to preventative action.
+Bug Parser teste cette idée sur un flux volontairement spécifique : récupérer des tickets Bug QC depuis Jira, demander à un modèle d'inférence local d'identifier leur cause racine probable, puis agréger les résultats en vues utiles aux décisions de production. Le principe est généralisable à d'autres domaines : utiliser un LLM comme couche de classification de données opérationnelles non structurées, puis relier les catégories obtenues à des actions de prévention.
 
-The project sits at the intersection of four disciplines:
+Le projet se situe au croisement de quatre domaines :
 
-- video game development and its production pipelines;
-- testing and quality intelligence;
-- local LLM inference for structured classification;
-- production decisions based on recurring evidence.
+- le développement de jeux vidéo et ses chaînes de production ;
+- le test et l'intelligence qualité ;
+- l'inférence LLM locale pour structurer la donnée ;
+- les décisions de production guidées par des régularités observables.
 
-It was intentionally built as a short proof of concept. The interesting question is not whether a dashboard can count bugs; it is whether a modest local model can make a large, messy bug history legible enough to support better upstream choices.
+Il a été volontairement construit comme une preuve de concept réalisée rapidement. La question intéressante n'est pas de compter des bugs dans un tableau de bord, mais de vérifier si un modèle local modeste peut rendre une historique de bugs suffisamment lisible pour éclairer des décisions en amont.
 
-## What the prototype does
+## Ce que fait le prototype
 
 ```text
-Jira Bug QC issues
+Tickets Bug QC Jira
         |
         v
-Local SQLite cache  --->  local LLM root-cause classification
+Cache SQLite local  --->  Classification de cause racine par LLM local
         |                                  |
-        +------------------------------->  |
+        +--------------------------------> |
                                            v
-                              categories, subsystems, tags,
-                              severity patterns, team heatmaps,
-                              temporal trends, duplicate clusters
+                              catégories, sous-systèmes, tags,
+                              tendances de sévérité, équipes,
+                              évolutions temporelles, doublons
                                            |
                                            v
-                              production-oriented report + dashboard
+                              rapport de production + tableau de bord
 ```
 
-The current pipeline provides:
+Le pipeline actuel propose :
 
-- Jira ingestion with project, date, limit, and JQL filters;
-- local SQLite storage for bug records and analysis results;
-- JSON extraction with tolerant handling of model responses;
-- root-cause categories, subsystem labels, tags, confidence, and error states;
-- Rich terminal reports and a Streamlit exploration dashboard;
-- severity/category breakdowns, team heatmaps, trends, high-impact spotlights, and simple semantic duplicate grouping;
-- a local OpenAI-compatible endpoint configuration, tested against a small local model rather than a hosted inference API.
+- l'ingestion Jira avec filtres par projet, date, volume et requête JQL ;
+- le stockage local SQLite des bugs et des analyses ;
+- l'extraction JSON avec gestion tolérante des réponses du modèle ;
+- des catégories de cause racine, sous-systèmes, tags, niveaux de confiance et états d'erreur ;
+- des rapports dans le terminal et un tableau de bord Streamlit ;
+- des répartitions par catégorie et sévérité, des matrices équipes/catégories, des tendances, des alertes sur les bugs à fort impact et un regroupement simple des doublons ;
+- un point d'accès compatible OpenAI local, prévu pour un petit modèle exécuté sur la machine plutôt qu'une API d'inférence hébergée.
 
-## What is demonstrated—and what is not
+## Ce qui est démontré — et ce qui ne l'est pas
 
-This repository demonstrates an end-to-end experimental shape: existing Jira data can be fetched, classified locally, stored, and turned into views for pattern discussion. It also makes model failures visible as `llm_error` or `parse_error` instead of silently treating them as findings.
+Le dépôt démontre une chaîne expérimentale complète : des données Jira existantes peuvent être récupérées, classifiées localement, stockées et transformées en vues permettant de discuter de régularités. Les erreurs du modèle sont également rendues visibles sous les états `llm_error` et `parse_error`, au lieu d'être silencieusement présentées comme des résultats.
 
-It does not yet demonstrate production-grade classification accuracy, causal proof, model benchmarking, taxonomy governance, or an automated link from a pattern to a confirmed process change. Human review remains essential: classifications are hypotheses for QA and production teams to validate, not authoritative root-cause decisions.
+Le projet ne démontre pas encore la précision de classification en production, une preuve de causalité, une comparaison systématique de modèles, une gouvernance de taxonomie ou un lien automatisé entre une régularité et une amélioration confirmée du processus. La revue humaine reste indispensable : les classifications sont des hypothèses à valider par les équipes qualité et production.
 
-The next credible evaluation would be a manually reviewed validation set: measure category agreement, confidence calibration, error rate, and whether the resulting patterns lead to an observable reduction in recurring bug types or rework.
+La prochaine évaluation crédible consisterait à constituer un échantillon relu manuellement et à mesurer l'accord sur les catégories, le calibrage de la confiance, le taux d'erreur et l'évolution des typologies de bugs récurrentes après action corrective.
 
-## Local-first and low-cost by design
+## Local, privé et peu coûteux par conception
 
-The inference client targets an OpenAI-compatible server on `127.0.0.1`, with a local model name configured in code. The design keeps Jira data and inference traffic on the local workstation, avoids per-request hosted-model costs, and makes the model boundary replaceable.
+Le client d'inférence vise un serveur compatible OpenAI exécuté sur `127.0.0.1`, avec un modèle local configurable dans le code. Cette approche conserve les données Jira et les échanges d'inférence sur la machine, évite un coût par requête auprès d'un fournisseur distant et permet de remplacer le modèle sans réécrire le pipeline.
 
-Local inference is a constraint, not a claim that every model will perform equally well. Results depend on model size, prompt design, structured-output reliability, and the quality of the source bug reports. The prototype therefore records raw responses and confidence values so that quality can be inspected rather than assumed.
+L'inférence locale est une contrainte expérimentale, pas une garantie que tous les modèles auront la même qualité. Les résultats dépendent de la taille du modèle, du prompt, de la fiabilité de la sortie structurée et de la qualité des tickets sources. Le prototype conserve donc les réponses brutes et les niveaux de confiance pour permettre une inspection réelle des résultats.
 
-## Quick start
+## Démarrage rapide
 
-### 1. Install dependencies
+### 1. Installer les dépendances
 
 ```bash
 python -m venv .venv
-source .venv/bin/activate        # Windows: .venv\Scripts\activate
+source .venv/bin/activate        # Windows : .venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-### 2. Configure services
+### 2. Configurer les services
 
-Copy `.env.example` to `.env` and provide credentials for a Jira instance you are authorized to access. Start an OpenAI-compatible local inference server at `http://127.0.0.1:8080/v1`, or adapt `src/llm_client.py` to the local server you use.
+Copier `.env.example` vers `.env` et fournir les identifiants d'une instance Jira à laquelle vous êtes autorisé à accéder. Démarrer un serveur d'inférence local compatible OpenAI sur `http://127.0.0.1:8080/v1`, ou adapter `src/llm_client.py` au serveur utilisé.
 
-The repository intentionally does not include Jira exports, SQLite databases, credentials, or generated reports. Those files are ignored by Git because bug descriptions and issue metadata may be confidential.
+Le dépôt n'inclut volontairement ni export Jira, ni base SQLite, ni identifiant, ni rapport généré. Ces fichiers sont ignorés par Git, car les descriptions et métadonnées de tickets peuvent être confidentielles.
 
-### 3. Run the pipeline
+### 3. Exécuter le pipeline
 
 ```bash
 python main.py sample --from-date 2026-01-01
 ```
 
-Or run each stage independently:
+Ou exécuter chaque étape séparément :
 
 ```bash
 python main.py fetch --limit 50
@@ -90,24 +90,24 @@ python main.py report --no-narrative
 streamlit run app.py
 ```
 
-Generated data is written under `output/` locally and is not intended for publication.
+Les données produites sont écrites localement dans `output/` et ne doivent pas être publiées.
 
-## Repository map
+## Organisation du dépôt
 
-- `main.py` — CLI orchestration for fetch, analyze, report, and sample runs.
-- `src/jira_client.py` — Jira REST ingestion.
-- `src/analyzer.py` — prompt and structured root-cause extraction.
-- `src/llm_client.py` — OpenAI-compatible local inference client.
-- `src/store.py` — SQLite schema and persistence.
-- `src/cluster.py` — aggregation and lightweight duplicate grouping.
-- `src/report.py` — terminal and JSON reporting.
-- `app.py` — Streamlit dashboard.
+- `main.py` — orchestration des commandes de récupération, analyse et rapport ;
+- `src/jira_client.py` — récupération via l'API REST Jira ;
+- `src/analyzer.py` — prompt et extraction structurée de la cause racine ;
+- `src/llm_client.py` — client d'inférence local compatible OpenAI ;
+- `src/store.py` — schéma et persistance SQLite ;
+- `src/cluster.py` — agrégations et regroupement léger des doublons ;
+- `src/report.py` — rapports dans le terminal et au format JSON ;
+- `app.py` — tableau de bord Streamlit.
 
-## Status
+## État du projet
 
-Exploratory proof of concept. The code is useful as a conversation starter and a base for evaluation; it is not presented as a production-ready quality system.
+Preuve de concept exploratoire. Le code sert de base de discussion et d'évaluation ; il n'est pas présenté comme un système qualité prêt pour la production.
 
-## Responsible use
+## Utilisation responsable
 
-Only connect the pipeline to Jira data that you are authorized to process. Review and sanitize exports before sharing them. Keep credentials in environment variables, keep generated databases out of version control, and treat model outputs as decision support subject to human validation.
+Ne connecter le pipeline qu'à des données Jira que vous êtes autorisé à traiter. Vérifier et anonymiser les exports avant de les partager. Conserver les identifiants dans des variables d'environnement, garder les bases générées hors du contrôle de version et considérer les sorties du modèle comme une aide à la décision soumise à validation humaine.
 
