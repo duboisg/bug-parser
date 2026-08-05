@@ -6,4 +6,4 @@ rich>=13.7.0
 tqdm>=4.66.0
 streamlit>=1.35.0
 plotly>=5.22.0
-pandas>=2.2.0
+pandas>=3.0.5
