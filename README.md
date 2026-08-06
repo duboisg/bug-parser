@@ -1,21 +1,12 @@
 # Bug Parser
 
-An exploratory proof of concept for turning game bug reports into production intelligence through a local, low-cost LLM pipeline.
+Bug Parser ingests Bug QC issues from Jira, asks a local OpenAI-compatible model to propose root-cause labels, stores the results in SQLite, and exposes them through terminal reports and a Streamlit dashboard.
 
 ## Why this exists
 
 In game development, a bug database contains more than a queue of individual fixes. Across enough reports, it can reveal recurring weaknesses in asset production, integration, configuration, content, testing, or team hand-offs. These patterns matter because they point upstream, toward the systems and processes that generate bugs rather than only toward their symptoms.
 
-Bug Parser tests that idea on a deliberately specific workflow: ingest Bug QC issues from Jira, ask a local inference model to identify their likely root cause, and aggregate the results into views that can inform production decisions. The underlying pattern is broader than games: use an LLM as a classification layer over unstructured operational data, then connect the resulting categories to preventative action.
-
-The project sits at the intersection of four disciplines:
-
-- video game development and its production pipelines;
-- testing and quality intelligence;
-- local LLM inference for structuring data;
-- production decisions guided by observable patterns.
-
-It was intentionally built as a short proof of concept. The interesting question is not whether a dashboard can count bugs, but whether a modest local model can make a messy bug history legible enough to support better upstream decisions.
+The proof of concept tests whether a modest local model can make a game bug history useful for upstream production decisions. The classifications remain hypotheses: QA and production teams must review them before changing a process or assigning cause.
 
 ## What the prototype does
 
