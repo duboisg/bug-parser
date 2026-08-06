@@ -1,10 +1,10 @@
 # Bug Parser
 
-Bug Parser ingests Bug QC issues from Jira, asks a local OpenAI-compatible model to propose root-cause labels, stores the results in SQLite, and exposes them through terminal reports and a Streamlit dashboard.
+Bug Parser ingests Bug QC issues from Jira and asks a local OpenAI-compatible model to propose root-cause labels. It stores the results in SQLite for terminal reporting and Streamlit exploration.
 
 ## Why this exists
 
-In game development, a bug database contains more than a queue of individual fixes. Across enough reports, it can reveal recurring weaknesses in asset production, integration, configuration, content, testing, or team hand-offs. These patterns matter because they point upstream, toward the systems and processes that generate bugs rather than only toward their symptoms.
+In game development, a bug database contains more than a queue of individual fixes. Across enough reports, it can reveal recurring weaknesses in content pipelines or team hand-offs. These patterns point toward the systems that generate bugs rather than only toward their symptoms.
 
 The proof of concept tests whether a modest local model can make a game bug history useful for upstream production decisions. The classifications remain hypotheses: QA and production teams must review them before changing a process or assigning cause.
 
@@ -38,17 +38,23 @@ The current pipeline provides:
 
 ## What is demonstrated—and what is not
 
-This repository demonstrates an end-to-end experimental shape: existing Jira data can be fetched, classified locally, stored, and turned into views for discussing patterns. Model failures are also made visible as `llm_error` or `parse_error` instead of being silently presented as findings.
+This repository demonstrates an end-to-end experimental path. Jira data can be fetched and classified locally, then the stored results can be reviewed through reports. Model failures appear as `llm_error` or `parse_error` instead of being silently presented as findings.
 
-It does not yet demonstrate production-grade classification accuracy, causal proof, systematic model benchmarking, taxonomy governance, or an automated link from a pattern to a confirmed process improvement. Human review remains essential: classifications are hypotheses for QA and production teams to validate, not authoritative root-cause decisions.
+It does not yet demonstrate:
 
-The next credible evaluation would be a manually reviewed validation set: measure category agreement, confidence calibration, error rate, and whether the resulting patterns lead to an observable reduction in recurring bug types or rework.
+- **Classification quality:** accuracy and causal validity have not been established.
+- **Evaluation discipline:** model benchmarking and taxonomy governance remain future work.
+- **Production impact:** no measured link connects a detected pattern to a confirmed process improvement.
+
+Human review remains essential. Classifications are hypotheses for QA and production teams to validate, not authoritative root-cause decisions.
+
+The next credible evaluation is a manually reviewed validation set. It should measure label agreement and error rates, then track whether reviewed patterns reduce recurring bugs or rework.
 
 ## Local-first and low-cost by design
 
 The inference client targets an OpenAI-compatible server on `127.0.0.1`, with a local model name configured in code. This keeps Jira data and inference traffic on the local workstation, avoids per-request hosted-model costs, and makes the model boundary replaceable.
 
-Local inference is a constraint, not a claim that every model will perform equally well. Results depend on model size, prompt design, structured-output reliability, and the quality of the source bug reports. The prototype therefore records raw responses and confidence values so that quality can be inspected rather than assumed.
+Local inference is a constraint, not a claim that every model will perform equally well. Results depend on the chosen model, the prompt, and source-report quality. The prototype records raw responses and confidence values so that quality can be inspected rather than assumed.
 
 ## Quick start
 
@@ -64,7 +70,7 @@ pip install -r requirements.txt
 
 Copy `.env.example` to `.env` and provide credentials for a Jira instance you are authorized to access. Start an OpenAI-compatible local inference server at `http://127.0.0.1:8080/v1`, or adapt `src/llm_client.py` to the local server you use.
 
-The repository intentionally does not include Jira exports, SQLite databases, credentials, or generated reports. Those files are ignored by Git because bug descriptions and issue metadata may be confidential.
+The repository excludes private Jira data and generated output. Those files are ignored by Git because bug descriptions and issue metadata may be confidential.
 
 ### 3. Run the pipeline
 
